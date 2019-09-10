@@ -7,15 +7,16 @@ Feel free to read the code, to fork it or to use it in whatever way you want.
 
 # Zipper
 
-[![Build Status](https://travis-ci.org/Chumper/Zipper.png)](https://travis-ci.org/Chumper/Zipper)
+[![Build Status](https://travis-ci.org/DariusIII/Zipper.png)](https://travis-ci.org/DariusIII/Zipper)
 
 This is a simple Wrapper around the ZipArchive methods with some handy functions.
 
 ## Installation
 
 1. Add this package to the list of required packages, inside `composer.json`
-  * for Laravel 5: `"chumper/zipper": "1.0.x"`
-  * ~~for Laravel 4: `"chumper/zipper": "0.5.x"`~~
+* for Laravel 6: `"dariusiii/zipper": "2.0.x"`
+  * for Laravel 5: `"dariusiii/zipper": "1.0.x"`
+  * ~~for Laravel 4: `"dariusiii/zipper": "0.5.x"`~~
 2. Run `composer update`
 
 3. Go to `app/config/app.php`
