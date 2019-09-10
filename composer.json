@@ -1,9 +1,9 @@
 {
-    "name": "chumper/zipper",
+    "name": "dariusiii/zipper",
     "type": "library",
     "description": "This is a little neat helper for the ZipArchive methods with handy functions",
     "keywords": ["laravel", "ZIP", "Archive"],
-    "homepage": "http://github.com/Chumper/zipper",
+    "homepage": "http://github.com/DariusIII/zipper",
     "license": "Apache2",
     "authors": [
         {
@@ -14,23 +14,23 @@
         }
     ],
     "require": {
-        "php": ">=5.6.0",
+        "php": ">=7.2.0",
         "ext-zip": "*",
-        "illuminate/support": "^5.0",
-        "illuminate/filesystem": "^5.0"
+        "illuminate/support": "^6.0",
+        "illuminate/filesystem": "^6.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7",
-        "mockery/mockery": "^0.9.4"
+        "phpunit/phpunit": "^7.0|^8.0",
+        "mockery/mockery": "^1.2"
     },
     "autoload": {
         "psr-4": {
-            "Chumper\\Zipper\\": "src/Chumper/Zipper"
+            "DariusIII\\Zipper\\": "src/DariusIII/Zipper"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Chumper\\Zipper\\": "tests/"
+            "DariusIII\\Zipper\\": "tests/"
         }
     },
     "config": {
@@ -39,10 +39,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Chumper\\Zipper\\ZipperServiceProvider"
+                "DariusIII\\Zipper\\ZipperServiceProvider"
             ],
             "aliases": {
-                "Zipper": "Chumper\\Zipper\\Zipper"
+                "Zipper": "DariusIII\\Zipper\\Zipper"
             }
         }
     },

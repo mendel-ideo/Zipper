@@ -20,8 +20,8 @@ This is a simple Wrapper around the ZipArchive methods with some handy functions
 
 3. Go to `app/config/app.php`
 
-  * add to providers `Chumper\Zipper\ZipperServiceProvider::class`
-  * add to aliases `'Zipper' => Chumper\Zipper\Zipper::class`
+  * add to providers `DariusIII\Zipper\ZipperServiceProvider::class`
+  * add to aliases `'Zipper' => DariusIII\Zipper\Zipper::class`
 
 You can now access Zipper with the `Zipper` alias.
 
@@ -34,7 +34,7 @@ Zipper::make('public/test.zip')->add($files)->close();
 
 ## Another example
 ```php
-$zipper = new \Chumper\Zipper\Zipper;
+$zipper = new \DariusIII\Zipper\Zipper;
 
 $zipper->make('test.zip')->folder('test')->add('composer.json');
 $zipper->zip('test.zip')->folder('test')->add('composer.json','test');
