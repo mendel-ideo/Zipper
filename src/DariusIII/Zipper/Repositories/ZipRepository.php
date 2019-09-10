@@ -16,9 +16,7 @@ class ZipRepository implements RepositoryInterface
      * @param bool $create
      * @param $archive
      *
-     * @throws \Exception
-     *
-     * @return ZipRepository
+     * @throws Exception
      */
     public function __construct($filePath, $create = false, $archive = null)
     {
@@ -40,7 +38,7 @@ class ZipRepository implements RepositoryInterface
      * @param $pathToFile
      * @param $pathInArchive
      */
-    public function addFile($pathToFile, $pathInArchive)
+    public function addFile($pathToFile, $pathInArchive): void
     {
         $this->archive->addFile($pathToFile, $pathInArchive);
     }
@@ -50,7 +48,7 @@ class ZipRepository implements RepositoryInterface
      *
      * @param $dirName
      */
-    public function addEmptyDir($dirName)
+    public function addEmptyDir($dirName): void
     {
         $this->archive->addEmptyDir($dirName);
     }
@@ -61,7 +59,7 @@ class ZipRepository implements RepositoryInterface
      * @param $name
      * @param $content
      */
-    public function addFromString($name, $content)
+    public function addFromString($name, $content): void
     {
         $this->archive->addFromString($name, $content);
     }
@@ -71,7 +69,7 @@ class ZipRepository implements RepositoryInterface
      *
      * @param $pathInArchive
      */
-    public function removeFile($pathInArchive)
+    public function removeFile($pathInArchive): void
     {
         $this->archive->deleteName($pathInArchive);
     }
@@ -83,7 +81,7 @@ class ZipRepository implements RepositoryInterface
      *
      * @return string
      */
-    public function getFileContent($pathInArchive)
+    public function getFileContent($pathInArchive): string
     {
         return $this->archive->getFromName($pathInArchive);
     }
@@ -106,7 +104,7 @@ class ZipRepository implements RepositoryInterface
      *
      * @param $callback
      */
-    public function each($callback)
+    public function each($callback): void
     {
         for ($i = 0; $i < $this->archive->numFiles; ++$i) {
             //skip if folder
@@ -114,10 +112,7 @@ class ZipRepository implements RepositoryInterface
             if ($stats['size'] === 0 && $stats['crc'] === 0) {
                 continue;
             }
-            call_user_func_array($callback, [
-                'file' => $this->archive->getNameIndex($i),
-                'stats' => $this->archive->statIndex($i)
-            ]);
+            $callback($this->archive->getNameIndex($i), $this->archive->statIndex($i));
         }
     }
 
@@ -128,7 +123,7 @@ class ZipRepository implements RepositoryInterface
      *
      * @return bool
      */
-    public function fileExists($fileInArchive)
+    public function fileExists($fileInArchive): bool
     {
         return $this->archive->locateName($fileInArchive) !== false;
     }
@@ -141,7 +136,7 @@ class ZipRepository implements RepositoryInterface
      *
      * @return bool
      */
-    public function usePassword($password)
+    public function usePassword($password): bool
     {
         return $this->archive->setPassword($password);
     }
@@ -151,7 +146,7 @@ class ZipRepository implements RepositoryInterface
      *
      * @return string
      */
-    public function getStatus()
+    public function getStatus(): string
     {
         return $this->archive->getStatusString();
     }
@@ -159,12 +154,16 @@ class ZipRepository implements RepositoryInterface
     /**
      * Closes the archive and saves it
      */
-    public function close()
+    public function close(): void
     {
         @$this->archive->close();
     }
 
-    private function getErrorMessage($resultCode)
+    /**
+     * @param $resultCode
+     * @return string
+     */
+    private function getErrorMessage($resultCode): string
     {
         switch ($resultCode) {
             case ZipArchive::ER_EXISTS:

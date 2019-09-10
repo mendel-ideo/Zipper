@@ -17,17 +17,17 @@ class Zipper
     /**
      * Constant for extracting
      */
-    const WHITELIST = 1;
+    public const WHITELIST = 1;
 
     /**
      * Constant for extracting
      */
-    const BLACKLIST = 2;
+    public const BLACKLIST = 2;
 
     /**
      * Constant for matching only strictly equal file names
      */
-    const EXACT_MATCH = 4;
+    public const EXACT_MATCH = 4;
 
     /**
      * @var string Represents the current location in the archive
@@ -56,7 +56,7 @@ class Zipper
      */
     public function __construct(Filesystem $fs = null)
     {
-        $this->file = $fs ? $fs : new Filesystem();
+        $this->file = $fs ?: new Filesystem();
     }
 
     /**
@@ -82,7 +82,7 @@ class Zipper
      *
      * @return $this Zipper instance
      */
-    public function make($pathToFile, $type = 'zip')
+    public function make($pathToFile, $type = 'zip'): self
     {
         $new = $this->createArchiveFile($pathToFile);
 
@@ -91,7 +91,7 @@ class Zipper
             $objectOrName = 'DariusIII\Zipper\Repositories\\' . ucwords($type) . 'Repository';
         }
 
-        if (!is_subclass_of($objectOrName, 'DariusIII\Zipper\Repositories\RepositoryInterface')) {
+        if (!is_subclass_of($objectOrName, RepositoryInterface::class)) {
             throw new \InvalidArgumentException("Class for '{$objectOrName}' must implement RepositoryInterface interface");
         }
 
@@ -119,7 +119,7 @@ class Zipper
      *
      * @return $this
      */
-    public function zip($pathToFile)
+    public function zip($pathToFile): self
     {
         $this->make($pathToFile);
 
@@ -135,7 +135,7 @@ class Zipper
      *
      * @return $this
      */
-    public function phar($pathToFile)
+    public function phar($pathToFile): self
     {
         $this->make($pathToFile, 'phar');
 
@@ -151,7 +151,7 @@ class Zipper
      *
      * @return $this
      */
-    public function rar($pathToFile)
+    public function rar($pathToFile): self
     {
         $this->make($pathToFile, 'rar');
 
@@ -176,11 +176,11 @@ class Zipper
         }
 
         if ($methodFlags & self::EXACT_MATCH) {
-            $matchingMethod = function ($haystack) use ($files) {
+            $matchingMethod = static function ($haystack) use ($files) {
                 return in_array($haystack, $files, true);
             };
         } else {
-            $matchingMethod = function ($haystack) use ($files) {
+            $matchingMethod = static function ($haystack) use ($files) {
                 return Str::startsWith($haystack, $files);
             };
         }
@@ -189,7 +189,7 @@ class Zipper
             $this->extractFilesInternal($path, $matchingMethod);
         } else {
             // blacklist - extract files that do not match with $matchingMethod
-            $this->extractFilesInternal($path, function ($filename) use ($matchingMethod) {
+            $this->extractFilesInternal($path, static function ($filename) use ($matchingMethod) {
                 return !$matchingMethod($filename);
             });
         }
@@ -203,6 +203,7 @@ class Zipper
      *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
+     * @return mixed
      */
     public function extractMatchingRegex($extractToPath, $regex)
     {
@@ -230,14 +231,14 @@ class Zipper
      *
      * @param $filePath string The full path (including all folders) of the file in the zip
      *
-     * @throws \Exception
+     * @throws \RuntimeException
      *
      * @return mixed returns the content or throws an exception
      */
     public function getFileContent($filePath)
     {
         if ($this->repository->fileExists($filePath) === false) {
-            throw new Exception(sprintf('The file "%s" cannot be found', $filePath));
+            throw new \RuntimeException(sprintf('The file "%s" cannot be found', $filePath));
         }
         return $this->repository->getFileContent($filePath);
     }
@@ -250,7 +251,7 @@ class Zipper
      *
      * @return $this Zipper instance
      */
-    public function add($pathToAdd, $fileName = null)
+    public function add($pathToAdd, $fileName = null): self
     {
         if (is_array($pathToAdd)) {
             foreach ($pathToAdd as $key=>$dir) {
@@ -276,11 +277,11 @@ class Zipper
     /**
      * Add an empty directory
      *
-     * @param $dirName
      *
-     * @return Zipper
+     * @param $dirName
+     * @return $this
      */
-    public function addEmptyDir($dirName)
+    public function addEmptyDir($dirName):self
     {
         $this->repository->addEmptyDir($dirName);
 
@@ -295,7 +296,7 @@ class Zipper
      *
      * @return $this Zipper instance
      */
-    public function addString($filename, $content)
+    public function addString($filename, $content): self
     {
         $this->addFromString($filename, $content);
 
@@ -307,7 +308,7 @@ class Zipper
      *
      * @return int The status of the internal zip file
      */
-    public function getStatus()
+    public function getStatus(): int
     {
         return $this->repository->getStatus();
     }
@@ -319,7 +320,7 @@ class Zipper
      *
      * @return $this Zipper instance
      */
-    public function remove($fileToRemove)
+    public function remove($fileToRemove): self
     {
         if (is_array($fileToRemove)) {
             $self = $this;
@@ -340,7 +341,7 @@ class Zipper
      *
      * @return string The path to the file
      */
-    public function getFilePath()
+    public function getFilePath(): string
     {
         return $this->filePath;
     }
@@ -352,7 +353,7 @@ class Zipper
      *
      * @return bool
      */
-    public function usePassword($password)
+    public function usePassword($password): bool
     {
         return $this->repository->usePassword($password);
     }
@@ -360,7 +361,7 @@ class Zipper
     /**
      * Closes the zip file and frees all handles
      */
-    public function close()
+    public function close(): void
     {
         if (null !== $this->repository) {
             $this->repository->close();
@@ -376,7 +377,7 @@ class Zipper
      *
      * @return $this
      */
-    public function folder($path)
+    public function folder($path): self
     {
         $this->currentFolder = $path;
 
@@ -388,7 +389,7 @@ class Zipper
      *
      * @return $this
      */
-    public function home()
+    public function home(): self
     {
         $this->currentFolder = '';
 
@@ -398,7 +399,7 @@ class Zipper
     /**
      * Deletes the archive file
      */
-    public function delete()
+    public function delete():void
     {
         if (null !== $this->repository) {
             $this->repository->close();
@@ -413,7 +414,7 @@ class Zipper
      *
      * @return string
      */
-    public function getArchiveType()
+    public function getArchiveType(): string
     {
         return get_class($this->repository);
     }
@@ -423,7 +424,7 @@ class Zipper
      *
      * @return string
      */
-    public function getCurrentFolderPath()
+    public function getCurrentFolderPath(): string
     {
         return $this->currentFolder;
     }
@@ -435,7 +436,7 @@ class Zipper
      *
      * @return bool
      */
-    public function contains($fileInArchive)
+    public function contains($fileInArchive): bool
     {
         return $this->repository->fileExists($fileInArchive);
     }
@@ -443,7 +444,7 @@ class Zipper
     /**
      * @return RepositoryInterface
      */
-    public function getRepository()
+    public function getRepository(): RepositoryInterface
     {
         return $this->repository;
     }
@@ -451,7 +452,7 @@ class Zipper
     /**
      * @return Filesystem
      */
-    public function getFileHandler()
+    public function getFileHandler(): Filesystem
     {
         return $this->file;
     }
@@ -461,7 +462,7 @@ class Zipper
      *
      * @return string
      */
-    public function getInternalPath()
+    public function getInternalPath(): string
     {
         return empty($this->currentFolder) ? '' : $this->currentFolder.'/';
     }
@@ -475,13 +476,13 @@ class Zipper
      *
      * @return array
      */
-    public function listFiles($regexFilter = null)
+    public function listFiles($regexFilter = null): array
     {
         $filesList = [];
         if ($regexFilter) {
-            $filter = function ($file) use (&$filesList, $regexFilter) {
+            $filter = static function ($file) use (&$filesList, $regexFilter) {
                 // push/pop an error handler here to to make sure no error/exception thrown if $expected is not a regex
-                set_error_handler(function () {
+                set_error_handler(static function () {
                 });
                 $match = preg_match($regexFilter, $file);
                 restore_error_handler();
@@ -493,7 +494,7 @@ class Zipper
                 }
             };
         } else {
-            $filter = function ($file) use (&$filesList) {
+            $filter = static function ($file) use (&$filesList) {
                 $filesList[] = $file;
             };
         }
@@ -502,7 +503,10 @@ class Zipper
         return $filesList;
     }
 
-    private function getCurrentFolderWithTrailingSlash()
+    /**
+     * @return string
+     */
+    private function getCurrentFolderWithTrailingSlash(): string
     {
         if (empty($this->currentFolder)) {
             return '';
@@ -525,7 +529,7 @@ class Zipper
      *
      * @return bool
      */
-    private function createArchiveFile($pathToZip)
+    private function createArchiveFile($pathToZip): bool
     {
         if (!$this->file->exists($pathToZip)) {
             $dirname = dirname($pathToZip);
@@ -544,7 +548,7 @@ class Zipper
     /**
      * @param $pathToDir
      */
-    private function addDir($pathToDir)
+    private function addDir($pathToDir): void
     {
         // First go over the files in this directory and add them to the repository.
         foreach ($this->file->files($pathToDir) as $file) {
@@ -566,7 +570,7 @@ class Zipper
      * @param string $pathToAdd
      * @param string $fileName
      */
-    private function addFile($pathToAdd, $fileName = null)
+    private function addFile($pathToAdd, $fileName = null): void
     {
         if (!$fileName) {
             $info = pathinfo($pathToAdd);
@@ -584,12 +588,16 @@ class Zipper
      * @param $filename
      * @param $content
      */
-    private function addFromString($filename, $content)
+    private function addFromString($filename, $content): void
     {
         $this->repository->addFromString($this->getInternalPath().$filename, $content);
     }
 
-    private function extractFilesInternal($path, callable $matchingMethod)
+    /**
+     * @param $path
+     * @param callable $matchingMethod
+     */
+    private function extractFilesInternal($path, callable $matchingMethod): void
     {
         $self = $this;
         $this->repository->each(function ($fileName) use ($path, $matchingMethod, $self) {

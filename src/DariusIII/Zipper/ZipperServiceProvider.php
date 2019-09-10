@@ -2,10 +2,11 @@
 
 namespace DariusIII\Zipper;
 
-use Illuminate\Foundation\AliasLoader;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
+use DariusIII\Zipper\Zipper;
 
-class ZipperServiceProvider extends ServiceProvider
+class ZipperServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
      * Indicates if loading of the provider is deferred.
@@ -26,15 +27,8 @@ class ZipperServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('zipper', function ($app) {
-            $return = $app->make('DariusIII\Zipper\Zipper');
-
-            return $return;
-        });
-
-        $this->app->booting(function () {
-            $loader = AliasLoader::getInstance();
-            $loader->alias('Zipper', 'DariusIII\Zipper\Facades\Zipper');
+        $this->app->singleton('zipper', static function ($app) {
+            return $app->make(Zipper::class);
         });
     }
 
@@ -43,7 +37,7 @@ class ZipperServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return ['zipper'];
     }
