@@ -1,5 +1,5 @@
 {
-    "name": "dariusiii/zipper",
+    "name": "smok55453/zipper",
     "type": "library",
     "description": "This is a little neat helper for the ZipArchive methods with handy functions",
     "keywords": ["laravel", "ZIP", "Archive"],
